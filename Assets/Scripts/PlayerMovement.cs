@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement")]
-    [SerializeField] private float speed = 1f;
+    [SerializeField] private float speed = 1.5f;
     [SerializeField] private PlayerInput playerInput;
     [SerializeField] private Rigidbody2D rb;
     [Header("Animation")]
@@ -32,9 +32,9 @@ public class PlayerMovement : MonoBehaviour
         if (movement != Vector2.zero)
         {
             FlipSprite(movement.x);
-            animator.SetFloat("Horizontal", movement.x);
-            animator.SetFloat("Vertical", movement.y);
-            animator.SetFloat("Speed", movement.sqrMagnitude);
+            animator.SetFloat("Horizontal", rb.linearVelocityX);
+            animator.SetFloat("Vertical", rb.linearVelocityY);
+            animator.SetFloat("Speed", rb.linearVelocity.magnitude);
         }
         else
         {
