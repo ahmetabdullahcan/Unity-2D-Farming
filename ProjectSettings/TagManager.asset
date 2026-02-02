@@ -8,7 +8,7 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Farmable
   - Water
   - UI
   - 
@@ -43,6 +43,12 @@ TagManager:
     locked: 0
   - name: Ground
     uniqueID: 973886293
+    locked: 0
+  - name: Farm
+    uniqueID: 3941945939
+    locked: 0
+  - name: Highlight
+    uniqueID: 1531788111
     locked: 0
   - name: Player
     uniqueID: 2682061839

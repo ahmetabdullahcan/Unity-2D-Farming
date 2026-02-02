@@ -9,8 +9,27 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Rigidbody2D rb;
     [Header("Animation")]
     [SerializeField] private Animator animator;
+    [Header("Ui")]
+    [SerializeField] private GameObject interactableUI;
 
     private Vector2 movement;
+    bool isMenuOpen = false;
+
+    void Start()
+    {
+        if (interactableUI != null) 
+            interactableUI.SetActive(false);
+    }
+
+    void MenuControls()
+    {
+        if (playerInput.actions["Menu"].WasPerformedThisFrame())
+        {
+            isMenuOpen = !isMenuOpen;
+            if (interactableUI != null) 
+                interactableUI.SetActive(isMenuOpen);
+        }
+    }
 
     private void HandleMove()
     {
@@ -29,12 +48,14 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleAnimation()
     {
-        if (movement != Vector2.zero)
+        Vector2 actualVelocity = rb.linearVelocity;
+        
+        if (actualVelocity.magnitude > 0.1f)
         {
-            FlipSprite(movement.x);
-            animator.SetFloat("Horizontal", rb.linearVelocityX);
-            animator.SetFloat("Vertical", rb.linearVelocityY);
-            animator.SetFloat("Speed", rb.linearVelocity.magnitude);
+            FlipSprite(actualVelocity.x);
+            animator.SetFloat("Horizontal", actualVelocity.x);
+            animator.SetFloat("Vertical", actualVelocity.y);
+            animator.SetFloat("Speed", actualVelocity.sqrMagnitude);
         }
         else
         {
@@ -46,5 +67,6 @@ public class PlayerMovement : MonoBehaviour
     {
         HandleMove();
         HandleAnimation();
+        MenuControls();
     }
 }
