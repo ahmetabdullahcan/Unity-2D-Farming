@@ -9,16 +9,23 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Rigidbody2D rb;
     [Header("Animation")]
     [SerializeField] private Animator animator;
+    [SerializeField] private SpriteRenderer spriteRenderer;
     [Header("Ui")]
     [SerializeField] private GameObject interactableUI;
 
     private Vector2 movement;
     bool isMenuOpen = false;
 
+    private GameObject[] menuObjects;
+
     void Start()
     {
-        if (interactableUI != null) 
-            interactableUI.SetActive(false);
+        menuObjects = GameObject.FindGameObjectsWithTag("UI");
+        foreach (var obj in menuObjects)
+        {
+            if (obj.name == "Panel")
+                obj.SetActive(false);
+        }
     }
 
     void MenuControls()
@@ -41,9 +48,9 @@ public class PlayerMovement : MonoBehaviour
     private void FlipSprite(float horizontal)
     {
         if (horizontal > 0.1f)
-            transform.localScale = new Vector3(1, 1, 1);
+            spriteRenderer.flipX = false;
         else if (horizontal < -0.1f)
-            transform.localScale = new Vector3(-1, 1, 1);
+            spriteRenderer.flipX = true;
     }
 
     private void HandleAnimation()
