@@ -10,11 +10,8 @@ public class PlayerMovement : MonoBehaviour
     [Header("Animation")]
     [SerializeField] private Animator animator;
     [SerializeField] private SpriteRenderer spriteRenderer;
-    [Header("Ui")]
-    [SerializeField] private GameObject interactableUI;
 
     private Vector2 movement;
-    bool isMenuOpen = false;
 
     private GameObject[] menuObjects;
 
@@ -28,15 +25,6 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    void MenuControls()
-    {
-        if (playerInput.actions["Menu"].WasPerformedThisFrame())
-        {
-            isMenuOpen = !isMenuOpen;
-            if (interactableUI != null) 
-                interactableUI.SetActive(isMenuOpen);
-        }
-    }
 
     private void HandleMove()
     {
@@ -74,6 +62,5 @@ public class PlayerMovement : MonoBehaviour
     {
         HandleMove();
         HandleAnimation();
-        MenuControls();
     }
 }
