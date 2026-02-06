@@ -178,11 +178,6 @@ public class PlayerActions : MonoBehaviour
                 }
                 break;
             default:
-                speechBubbleRenderer.enabled = true;
-                speechBubbleText.text = "Nothing equipped!";
-                await Task.Delay(1000);
-                speechBubbleText.text = "";
-                speechBubbleRenderer.enabled = false;
                 break;
         }
     }
