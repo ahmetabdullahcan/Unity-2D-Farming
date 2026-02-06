@@ -4,9 +4,11 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
+using UnityEngine.UI;
 
-public class PlayerFarming : MonoBehaviour
+public class PlayerActions : MonoBehaviour
 {
+    #region Editor Fields
     [Header("Input")]
     [SerializeField] private PlayerInput playerInput;
 
@@ -15,33 +17,42 @@ public class PlayerFarming : MonoBehaviour
     [SerializeField] private Tilemap highlightTilemap;
 
     [Header("Tiles")]
-    [SerializeField] private TileBase farmTile;
+    [SerializeField] private TileBase[] farmTiles;
     [SerializeField] private TileBase highlightTile;
 
 
     [Header("Experimental")]
     [SerializeField] private Sprite[] progressRingBar;
     [SerializeField] private SpriteRenderer progressRingRenderer;
-    [SerializeField] private float maxDistance = 1.5f;
     [SerializeField] private TextMeshProUGUI speechBubbleText;
     [SerializeField] private SpriteRenderer speechBubbleRenderer;
+    [SerializeField] private GameObject hotbar;
 
     [Header("Animations")]
     [SerializeField] private Animator playerAnimator;
     [SerializeField] private SpriteRenderer playerSpriteRenderer;
+    #endregion
 
     private Camera mainCamera;
     private Vector3Int lastHighlightedCell;
     private bool hasHighlight;
 
-    private bool isProgressing = false;
+    #region Action Handlers
+    private Farming farming;
+    #endregion
 
+    private void Start()
+    {
+        farming = new Farming(farmTiles, interactableTilemap, playerAnimator);
+    }
 
+    
     private void Awake()
     {
         mainCamera = Camera.main;
         speechBubbleRenderer.enabled = false;
     }
+
 
     private void LateUpdate()
     {
@@ -49,59 +60,33 @@ public class PlayerFarming : MonoBehaviour
         HandleInput();
     }
 
-    private float GetDistanceToCell(Vector3Int cell)
+    private int GetSelectedHotbarSlot()
     {
-        Vector3 cellWorldPos = interactableTilemap.CellToWorld(cell) + interactableTilemap.tileAnchor;
-        return Vector3.Distance(transform.position, cellWorldPos);
+        foreach (Image slot in hotbar.GetComponentsInChildren<Image>())
+        {
+            if (slot.enabled)
+            {
+                return Array.IndexOf(hotbar.GetComponentsInChildren<Image>(), slot);
+            }
+        }
+        return -1;
     }
 
 
     private async Task ProgressUpdate()
     {
-        GetLookDirection();
-        playerAnimator.SetBool("isHoeing", true);
-        isProgressing = true;
         playerInput.actions.Disable();
         for (int i = 0; i < progressRingBar.Length; i++)
         {
             progressRingRenderer.sprite = progressRingBar[i];
             await Task.Delay(300);
         }
-        isProgressing = false;
         playerInput.actions.Enable();
         progressRingRenderer.sprite = null;
-        playerAnimator.SetBool("isHoeing", false);
-    }
-
-
-    private async void HandleInput()
-    {
-        if (!playerInput.actions["Hoe"].WasPerformedThisFrame())
-            return;
-
-        if (!hasHighlight)
-            return;
-        if (GetDistanceToCell(lastHighlightedCell) > maxDistance)
-        {
-            speechBubbleRenderer.enabled = true;
-            speechBubbleText.text = "Too far!";
-            await Task.Delay(1000);
-            speechBubbleText.text = "";
-            speechBubbleRenderer.enabled = false;
-            return;
-        }
-        lastHighlightedCell = GetTargetedTile();
-        if (interactableTilemap.GetTile(lastHighlightedCell).name.Equals("FarmLand_Tile_4"))
-            return;
-        await ProgressUpdate();
-        ReplaceTile(lastHighlightedCell, farmTile);
     }
 
     private void UpdateHighlight()
     {
-        if (isProgressing)
-            return;
-
         Vector3Int cell = GetTargetedTile();
 
         if (!interactableTilemap.HasTile(cell))
@@ -122,6 +107,7 @@ public class PlayerFarming : MonoBehaviour
         hasHighlight = true;
     }
 
+
     private void ClearHighlight()
     {
         if (!hasHighlight)
@@ -140,12 +126,8 @@ public class PlayerFarming : MonoBehaviour
         return interactableTilemap.WorldToCell(worldPos);
     }
 
-    private void ReplaceTile(Vector3Int cellPosition, TileBase newTile)
-    {
-        interactableTilemap.SetTile(cellPosition, newTile);
-    }
 
-    private void GetLookDirection()
+    private void SetLookDirection()
     {
         Vector2 mouseScreenPos = Mouse.current.position.ReadValue();
         Vector3 worldPos = mainCamera.ScreenToWorldPoint(mouseScreenPos);
@@ -174,6 +156,34 @@ public class PlayerFarming : MonoBehaviour
             playerSpriteRenderer.flipX = true;
             playerAnimator.SetFloat("LookDirectionX", -1); 
             playerAnimator.SetFloat("LookDirectionY", 0);
+        }
+    }
+
+    private async void HandleInput()
+    {
+        if (!playerInput.actions["Action"].WasPerformedThisFrame())
+            return;
+
+        SetLookDirection();
+        Vector3Int targetedCell = GetTargetedTile();
+        switch (GetSelectedHotbarSlot())
+        {
+            case 0:
+                if (farming.CanFarmAtCell(targetedCell, speechBubbleRenderer, speechBubbleText))
+                {
+                    playerAnimator.SetBool("isHoeing", true);
+                    await ProgressUpdate();
+                    farming.HandleFarming(targetedCell);
+                    playerAnimator.SetBool("isHoeing", false);
+                }
+                break;
+            default:
+                speechBubbleRenderer.enabled = true;
+                speechBubbleText.text = "Nothing equipped!";
+                await Task.Delay(1000);
+                speechBubbleText.text = "";
+                speechBubbleRenderer.enabled = false;
+                break;
         }
     }
 }
