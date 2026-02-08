@@ -546,6 +546,17 @@
                     "action": "Hotbar",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6ae2422a-deda-4e7a-84f0-5ef8e816f6b3",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Hotbar",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },

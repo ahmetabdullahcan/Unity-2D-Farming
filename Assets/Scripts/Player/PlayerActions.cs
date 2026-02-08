@@ -18,6 +18,7 @@ public class PlayerActions : MonoBehaviour
 
     [Header("Tiles")]
     [SerializeField] private TileBase[] farmTiles;
+    [SerializeField] private TileBase[] wateredFarmTiles;
     [SerializeField] private TileBase highlightTile;
 
 
@@ -25,7 +26,7 @@ public class PlayerActions : MonoBehaviour
     [SerializeField] private Sprite[] progressRingBar;
     [SerializeField] private SpriteRenderer progressRingRenderer;
     [SerializeField] private TextMeshProUGUI speechBubbleText;
-    [SerializeField] private SpriteRenderer speechBubbleRenderer;
+    [SerializeField] private Image speechBubbleRenderer;
     [SerializeField] private GameObject hotbar;
 
     [Header("Animations")]
@@ -39,18 +40,26 @@ public class PlayerActions : MonoBehaviour
 
     #region Action Handlers
     private Farming farming;
+
+    private Watering watering;
+
     #endregion
 
     private void Start()
     {
         farming = new Farming(farmTiles, interactableTilemap, playerAnimator);
+        watering = new Watering(wateredFarmTiles, interactableTilemap, playerAnimator);
     }
 
     
     private void Awake()
     {
         mainCamera = Camera.main;
-        speechBubbleRenderer.enabled = false;
+        speechBubbleRenderer.color = new Color(
+            speechBubbleRenderer.color.r, 
+            speechBubbleRenderer.color.g, 
+            speechBubbleRenderer.color.b, 
+            0f);
     }
 
 
@@ -159,11 +168,38 @@ public class PlayerActions : MonoBehaviour
         }
     }
 
+    private async Task ShowSpeechBubble(string message)
+    {
+        if (speechBubbleText.text.Length > 0)
+            return;
+        speechBubbleRenderer.color = new Color(
+        speechBubbleRenderer.color.r, 
+        speechBubbleRenderer.color.g, 
+        speechBubbleRenderer.color.b, 
+        1f);
+        while (speechBubbleText.text.Length  < message.Length)
+        {
+            speechBubbleText.text += message[speechBubbleText.text.Length];
+            await Task.Delay(50);
+        }
+        await Task.Delay(1000);
+        while (speechBubbleText.text.Length > 0)
+        {
+            speechBubbleText.text = speechBubbleText.text.Substring(0, speechBubbleText.text.Length - 1);
+            await Task.Delay(50);
+        }
+        speechBubbleRenderer.color = new Color(
+            speechBubbleRenderer.color.r, 
+            speechBubbleRenderer.color.g, 
+            speechBubbleRenderer.color.b, 
+            0f);
+        speechBubbleText.text = "";
+    }
+
     private async void HandleInput()
     {
         if (!playerInput.actions["Action"].WasPerformedThisFrame())
             return;
-
         SetLookDirection();
         Vector3Int targetedCell = GetTargetedTile();
         switch (GetSelectedHotbarSlot())
@@ -175,6 +211,21 @@ public class PlayerActions : MonoBehaviour
                     await ProgressUpdate();
                     farming.HandleFarming(targetedCell);
                     playerAnimator.SetBool("isHoeing", false);
+                }
+                break;
+            case 1:
+                await ShowSpeechBubble("This feature is not implemented yet!");
+                break;
+            case 2:
+                await ShowSpeechBubble("This feature is not implemented yet!");
+                break;
+            case 3:
+                if (watering.CanWaterTheCell(targetedCell, speechBubbleRenderer, speechBubbleText))
+                {
+                    playerAnimator.SetBool("isWatering", true);
+                    await ProgressUpdate();
+                    watering.HandleWatering(targetedCell);
+                    playerAnimator.SetBool("isWatering", false);
                 }
                 break;
             default:

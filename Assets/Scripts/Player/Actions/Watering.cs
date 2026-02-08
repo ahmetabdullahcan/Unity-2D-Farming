@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -7,52 +5,37 @@ using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 
 
-public class Farming
+public class Watering
 {
-    private readonly string[] farmTileNames;
-    private readonly TileBase[] farmTiles;
+    private readonly string farmTileCenterName = "FarmLand_Tile_4";
+    private readonly TileBase[] wateredFarmTiles;
     private readonly Tilemap interactableTilemap;
     private readonly Animator playerAnimator;
 
 
-    public Farming(TileBase[] farmTiles, Tilemap interactableTilemap, Animator playerAnimator)
+    public Watering(TileBase[] wateredFarmTiles, Tilemap interactableTilemap, Animator playerAnimator)
     {
-        this.farmTiles = farmTiles;
-        farmTileNames = new string[farmTiles.Length];
-        for (int i = 0; i < farmTiles.Length; i++)
-        {
-            farmTileNames[i] = farmTiles[i].name;
-        }
+        this.wateredFarmTiles = wateredFarmTiles;
         this.interactableTilemap = interactableTilemap;
         this.playerAnimator = playerAnimator;
     }
 
     private void ReplaceTiles(Vector3Int cellPosition)
     {
-        interactableTilemap.SetTile(cellPosition + new Vector3Int(-1, 1, 0), farmTiles[0]);
-        interactableTilemap.SetTile(cellPosition + new Vector3Int(0, 1, 0), farmTiles[1]);
-        interactableTilemap.SetTile(cellPosition + new Vector3Int(1, 1, 0), farmTiles[2]);
-        interactableTilemap.SetTile(cellPosition + new Vector3Int(-1, 0, 0), farmTiles[3]);
-        interactableTilemap.SetTile(cellPosition, farmTiles[4]);
-        interactableTilemap.SetTile(cellPosition + new Vector3Int(1, 0, 0), farmTiles[5]);
-        interactableTilemap.SetTile(cellPosition + new Vector3Int(-1, -1, 0), farmTiles[6]);
-        interactableTilemap.SetTile(cellPosition + new Vector3Int(0, -1, 0), farmTiles[7]);
-        interactableTilemap.SetTile(cellPosition + new Vector3Int(1, -1, 0), farmTiles[8]);
+        interactableTilemap.SetTile(cellPosition + new Vector3Int(-1, 1, 0), wateredFarmTiles[0]);
+        interactableTilemap.SetTile(cellPosition + new Vector3Int(0, 1, 0), wateredFarmTiles[1]);
+        interactableTilemap.SetTile(cellPosition + new Vector3Int(1, 1, 0), wateredFarmTiles[2]);
+        interactableTilemap.SetTile(cellPosition + new Vector3Int(-1, 0, 0), wateredFarmTiles[3]);
+        interactableTilemap.SetTile(cellPosition, wateredFarmTiles[4]);
+        interactableTilemap.SetTile(cellPosition + new Vector3Int(1, 0, 0), wateredFarmTiles[5]);
+        interactableTilemap.SetTile(cellPosition + new Vector3Int(-1, -1, 0), wateredFarmTiles[6]);
+        interactableTilemap.SetTile(cellPosition + new Vector3Int(0, -1, 0), wateredFarmTiles[7]);
+        interactableTilemap.SetTile(cellPosition + new Vector3Int(1, -1, 0), wateredFarmTiles[8]);
     }
     private bool CheckAreaTiles(Vector3Int cellPosition)
     {
-        for (int x = -1; x <= 1; x++)
-        {
-            for (int y = -1; y <= 1; y++)
-            {
-                Vector3Int checkPos = cellPosition + new Vector3Int(x, y, 0);
-                if (!interactableTilemap.HasTile(checkPos) ||
-                farmTileNames.Contains(interactableTilemap.GetTile(checkPos).name))
-                {
-                    return false;
-                }
-            }
-        }
+        if (interactableTilemap.GetTile(cellPosition).name != farmTileCenterName)
+            return false;
         return true;
     }
 
@@ -64,7 +47,7 @@ public class Farming
         return distance <= maxDistance;
     }
 
-    private async Task ShowTooFarMessage(Image speechBubbleRenderer, TextMeshProUGUI speechBubbleText, int delay = 1000)
+    private async Task ShowMessage(Image speechBubbleRenderer, TextMeshProUGUI speechBubbleText, int delay, string message)
     {
         if (speechBubbleText.text.Length > 0)
             return;
@@ -73,7 +56,6 @@ public class Farming
             speechBubbleRenderer.color.g, 
             speechBubbleRenderer.color.b, 
             1f);
-        string message = "Too far away!";
         while (speechBubbleText.text.Length  < message.Length)
         {
             speechBubbleText.text += message[speechBubbleText.text.Length];
@@ -93,24 +75,27 @@ public class Farming
         speechBubbleText.text = "";
     }
 
-    public bool CanFarmAtCell(Vector3Int cellPosition, Image speechBubbleRenderer, TextMeshProUGUI speechBubbleText)
+    public bool CanWaterTheCell(Vector3Int cellPosition, Image speechBubbleRenderer, TextMeshProUGUI speechBubbleText)
     {
         if (!interactableTilemap.HasTile(cellPosition))
             return false;
 
         if (!CheckAreaTiles(cellPosition))
+        {
+            _ = ShowMessage(speechBubbleRenderer, speechBubbleText, 1000, "You cannot water this area!");
             return false;
+        }
 
         if (!IsPlayerInRange(cellPosition))
         {
-            _ = ShowTooFarMessage(speechBubbleRenderer, speechBubbleText);
+            _ = ShowMessage(speechBubbleRenderer, speechBubbleText, 1000, "You are too far away to water the crops!");
             return false;
         }
 
         return true;
     }
 
-    public void HandleFarming(Vector3Int cellPosition)
+    public void HandleWatering(Vector3Int cellPosition)
     {
         ReplaceTiles(cellPosition);
     }
