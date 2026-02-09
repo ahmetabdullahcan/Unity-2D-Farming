@@ -39,7 +39,7 @@ public class Farming
         interactableTilemap.SetTile(cellPosition + new Vector3Int(0, -1, 0), farmTiles[7]);
         interactableTilemap.SetTile(cellPosition + new Vector3Int(1, -1, 0), farmTiles[8]);
     }
-    private bool CheckAreaTiles(Vector3Int cellPosition)
+    private bool CheckAreaTiles(Vector3Int cellPosition, TileBase hoeableTile, Image speechBubbleRenderer, TextMeshProUGUI speechBubbleText)
     {
         for (int x = -1; x <= 1; x++)
         {
@@ -49,10 +49,23 @@ public class Farming
                 if (!interactableTilemap.HasTile(checkPos) ||
                 farmTileNames.Contains(interactableTilemap.GetTile(checkPos).name))
                 {
+                    _ = ShowMessage(speechBubbleRenderer, speechBubbleText, 1000, "This area is already hoed!");
+                    return false;
+                }
+                if (interactableTilemap.GetTile(checkPos).name.StartsWith("Watered"))
+                {
+                    _ = ShowMessage(speechBubbleRenderer, speechBubbleText, 1000, "This area is already hoed and watered!");
+                    return false;
+                }
+                if (interactableTilemap.GetTile(checkPos).name != hoeableTile.name)
+                {
+                    _ = ShowMessage(speechBubbleRenderer, speechBubbleText, 1000, "This area can't be hoed!");
                     return false;
                 }
             }
         }
+
+        
         return true;
     }
 
@@ -64,7 +77,7 @@ public class Farming
         return distance <= maxDistance;
     }
 
-    private async Task ShowTooFarMessage(Image speechBubbleRenderer, TextMeshProUGUI speechBubbleText, int delay = 1000)
+    private async Task ShowMessage(Image speechBubbleRenderer, TextMeshProUGUI speechBubbleText, int delay, string message)
     {
         if (speechBubbleText.text.Length > 0)
             return;
@@ -73,7 +86,6 @@ public class Farming
             speechBubbleRenderer.color.g, 
             speechBubbleRenderer.color.b, 
             1f);
-        string message = "Too far away!";
         while (speechBubbleText.text.Length  < message.Length)
         {
             speechBubbleText.text += message[speechBubbleText.text.Length];
@@ -93,17 +105,17 @@ public class Farming
         speechBubbleText.text = "";
     }
 
-    public bool CanFarmAtCell(Vector3Int cellPosition, Image speechBubbleRenderer, TextMeshProUGUI speechBubbleText)
+    public bool CanFarmAtCell(Vector3Int cellPosition, Image speechBubbleRenderer, TextMeshProUGUI speechBubbleText, TileBase hoeableTile)
     {
         if (!interactableTilemap.HasTile(cellPosition))
             return false;
 
-        if (!CheckAreaTiles(cellPosition))
+        if (!CheckAreaTiles(cellPosition, hoeableTile, speechBubbleRenderer, speechBubbleText))
             return false;
 
         if (!IsPlayerInRange(cellPosition))
         {
-            _ = ShowTooFarMessage(speechBubbleRenderer, speechBubbleText);
+            _ = ShowMessage(speechBubbleRenderer, speechBubbleText, 1000, "Too far away!");
             return false;
         }
 

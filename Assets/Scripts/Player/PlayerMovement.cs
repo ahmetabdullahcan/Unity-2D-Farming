@@ -7,6 +7,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float speed = 1.5f;
     [SerializeField] private PlayerInput playerInput;
     [SerializeField] private Rigidbody2D rb;
+    [SerializeField] private BoxCollider2D cameraBounds;
     [Header("Animation")]
     [SerializeField] private Animator animator;
     [SerializeField] private SpriteRenderer spriteRenderer;
@@ -23,6 +24,7 @@ public class PlayerMovement : MonoBehaviour
             if (obj.name == "Panel")
                 obj.SetActive(false);
         }
+        cameraBounds.enabled = false;
     }
 
 

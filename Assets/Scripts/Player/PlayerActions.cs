@@ -20,6 +20,7 @@ public class PlayerActions : MonoBehaviour
     [SerializeField] private TileBase[] farmTiles;
     [SerializeField] private TileBase[] wateredFarmTiles;
     [SerializeField] private TileBase highlightTile;
+    [SerializeField] private TileBase HoeableTile;
 
 
     [Header("Experimental")]
@@ -205,7 +206,7 @@ public class PlayerActions : MonoBehaviour
         switch (GetSelectedHotbarSlot())
         {
             case 0:
-                if (farming.CanFarmAtCell(targetedCell, speechBubbleRenderer, speechBubbleText))
+                if (farming.CanFarmAtCell(targetedCell, speechBubbleRenderer, speechBubbleText, HoeableTile))
                 {
                     playerAnimator.SetBool("isHoeing", true);
                     await ProgressUpdate();
