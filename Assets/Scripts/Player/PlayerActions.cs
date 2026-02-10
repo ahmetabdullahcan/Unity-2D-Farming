@@ -29,6 +29,7 @@ public class PlayerActions : MonoBehaviour
     [SerializeField] private TextMeshProUGUI speechBubbleText;
     [SerializeField] private Image speechBubbleRenderer;
     [SerializeField] private GameObject hotbar;
+    [SerializeField] private GameObject inventoryPanel;
 
     [Header("Animations")]
     [SerializeField] private Animator playerAnimator;
@@ -66,6 +67,11 @@ public class PlayerActions : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (inventoryPanel.activeSelf)
+        {
+            ClearHighlight();
+            return;
+        }
         UpdateHighlight();
         HandleInput();
     }
