@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement")]
-    [SerializeField] private float speed = 1.5f;
+    [SerializeField] private float speed = 4f;
     [SerializeField] private PlayerInput playerInput;
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private BoxCollider2D cameraBounds;
@@ -14,25 +14,15 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector2 movement;
 
-    private GameObject[] menuObjects;
-
     void Start()
     {
-        menuObjects = GameObject.FindGameObjectsWithTag("UI");
-        foreach (var obj in menuObjects)
-        {
-            if (obj.name == "Panel")
-                obj.SetActive(false);
-        }
         cameraBounds.enabled = false;
     }
-
 
     private void HandleMove()
     {
         movement = playerInput.actions["Move"].ReadValue<Vector2>();
         movement = movement.normalized;
-        rb.linearVelocity = movement * speed;
     }
 
     private void FlipSprite(float horizontal)
@@ -64,5 +54,10 @@ public class PlayerMovement : MonoBehaviour
     {
         HandleMove();
         HandleAnimation();
+    }
+
+    void FixedUpdate()
+    {
+        rb.linearVelocity = movement * speed;
     }
 }

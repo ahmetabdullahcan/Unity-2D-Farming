@@ -63,26 +63,37 @@ public class Hotbar : MonoBehaviour
 
     private async Task HotbarGoAway()
     {
-        while (hotbar.transform.localPosition.x > -100)
+        int counter = 0;
+        while (counter < 10)
         {
             hotbar.transform.localPosition += new Vector3(-10, 0, 0);
             await Task.Delay(20);
+            counter++;
         }
 
     }
 
     private async Task HotbarComeBack()
     {
-        while (hotbar.transform.localPosition.x < 0)
+        int counter = 0;
+        while (counter < 12)
         {
             hotbar.transform.localPosition += new Vector3(10, 0, 0);
             await Task.Delay(20);
+            counter++;
+        }
+        await Task.Delay(20);
+        while (counter > 10)
+        {
+            hotbar.transform.localPosition += new Vector3(-10, 0, 0);
+            await Task.Delay(20);
+            counter--;
         }
     }
 
     private async void MoveHotbar()
     {
-        if (hotbar.transform.localPosition.x >= 0)
+        if (hotbar.activeSelf)
         {
             await HotbarGoAway();
             hotbar.SetActive(!hotbar.activeSelf);
