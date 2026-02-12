@@ -12,7 +12,7 @@ public class Hotbar : MonoBehaviour
     [SerializeField] private PlayerInput playerInput;
     [SerializeField] private InputActionReference hotbarAction;
 
-    private int selectedSlot = 0;
+    private int selectedSlot = 1;
 
     void DisableNonSelectedSlots()
     {

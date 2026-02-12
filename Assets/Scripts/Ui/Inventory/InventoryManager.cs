@@ -28,16 +28,7 @@ public class InventoryManager : MonoBehaviour
 
     void onToggleInventory(InputAction.CallbackContext context)
     {
-        if (inventoryPanel.activeSelf)
-        {
-            inventoryPanel.SetActive(false);
-            playerInput.SwitchCurrentActionMap("Player");
-        }
-        else
-        {
-            inventoryPanel.SetActive(true);
-            playerInput.SwitchCurrentActionMap("UI");
-        }
+        inventoryPanel.SetActive(!inventoryPanel.activeSelf);
     }
 
     void OnEnable()
