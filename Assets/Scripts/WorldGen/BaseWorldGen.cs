@@ -1,3 +1,4 @@
+using System;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -13,6 +14,8 @@ public class BaseWorldGen : MonoBehaviour
     public int mapHeight;
     public BoxCollider2D worldCollider;
     public CinemachineConfiner2D cinemachineConfiner;
+
+    public event Action OnWorldGenerated;
 
     private void setCamBorders()
     {
@@ -61,5 +64,6 @@ public class BaseWorldGen : MonoBehaviour
         fillBorders();
         fillCenter();
         setCamBorders();
+        OnWorldGenerated?.Invoke();
     }
 }
