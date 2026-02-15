@@ -7,17 +7,11 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float speed = 4f;
     [SerializeField] private PlayerInput playerInput;
     [SerializeField] private Rigidbody2D rb;
-    [SerializeField] private BoxCollider2D cameraBounds;
     [Header("Animation")]
     [SerializeField] private Animator animator;
     [SerializeField] private SpriteRenderer spriteRenderer;
 
     private Vector2 movement;
-
-    void Start()
-    {
-        cameraBounds.enabled = false;
-    }
 
     private void HandleMove()
     {
