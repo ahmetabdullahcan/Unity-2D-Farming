@@ -13,11 +13,13 @@ public class Farming
     private readonly TileBase[] farmTiles;
     private readonly Tilemap interactableTilemap;
     private readonly Animator playerAnimator;
+    private readonly Tilemap decorationTilemap;
 
 
-    public Farming(TileBase[] farmTiles, Tilemap interactableTilemap, Animator playerAnimator)
+    public Farming(TileBase[] farmTiles, Tilemap interactableTilemap, Animator playerAnimator, Tilemap decorationTilemap)
     {
         this.farmTiles = farmTiles;
+        this.decorationTilemap = decorationTilemap;
         farmTileNames = new string[farmTiles.Length];
         for (int i = 0; i < farmTiles.Length; i++)
         {
@@ -27,19 +29,19 @@ public class Farming
         this.playerAnimator = playerAnimator;
     }
 
-    private void ReplaceTiles(Vector3Int cellPosition)
+    private void ReplaceTiles(Vector3Int cellPosition, Tilemap tilemap)
     {
-        interactableTilemap.SetTile(cellPosition + new Vector3Int(-1, 1, 0), farmTiles[0]);
-        interactableTilemap.SetTile(cellPosition + new Vector3Int(0, 1, 0), farmTiles[1]);
-        interactableTilemap.SetTile(cellPosition + new Vector3Int(1, 1, 0), farmTiles[2]);
-        interactableTilemap.SetTile(cellPosition + new Vector3Int(-1, 0, 0), farmTiles[3]);
-        interactableTilemap.SetTile(cellPosition, farmTiles[4]);
-        interactableTilemap.SetTile(cellPosition + new Vector3Int(1, 0, 0), farmTiles[5]);
-        interactableTilemap.SetTile(cellPosition + new Vector3Int(-1, -1, 0), farmTiles[6]);
-        interactableTilemap.SetTile(cellPosition + new Vector3Int(0, -1, 0), farmTiles[7]);
-        interactableTilemap.SetTile(cellPosition + new Vector3Int(1, -1, 0), farmTiles[8]);
+        tilemap.SetTile(cellPosition + new Vector3Int(-1, 1, 0), farmTiles[0]);
+        tilemap.SetTile(cellPosition + new Vector3Int(0, 1, 0), farmTiles[1]);
+        tilemap.SetTile(cellPosition + new Vector3Int(1, 1, 0), farmTiles[2]);
+        tilemap.SetTile(cellPosition + new Vector3Int(-1, 0, 0), farmTiles[3]);
+        tilemap.SetTile(cellPosition, farmTiles[4]);
+        tilemap.SetTile(cellPosition + new Vector3Int(1, 0, 0), farmTiles[5]);
+        tilemap.SetTile(cellPosition + new Vector3Int(-1, -1, 0), farmTiles[6]);
+        tilemap.SetTile(cellPosition + new Vector3Int(0, -1, 0), farmTiles[7]);
+        tilemap.SetTile(cellPosition + new Vector3Int(1, -1, 0), farmTiles[8]);
     }
-    private bool CheckAreaTiles(Vector3Int cellPosition, TileBase hoeableTile, Image speechBubbleRenderer, TextMeshProUGUI speechBubbleText)
+    private bool CheckAreaTiles(Vector3Int cellPosition, TileBase[] hoeableTiles, Image speechBubbleRenderer, TextMeshProUGUI speechBubbleText)
     {
         for (int x = -1; x <= 1; x++)
         {
@@ -57,7 +59,7 @@ public class Farming
                     _ = ShowMessage(speechBubbleRenderer, speechBubbleText, 1000, "This area is already hoed and watered!");
                     return false;
                 }
-                if (interactableTilemap.GetTile(checkPos).name != hoeableTile.name)
+                if (!hoeableTiles.Any(tile => tile.name == interactableTilemap.GetTile(checkPos).name))
                 {
                     _ = ShowMessage(speechBubbleRenderer, speechBubbleText, 1000, "This area can't be hoed!");
                     return false;
@@ -105,12 +107,12 @@ public class Farming
         speechBubbleText.text = "";
     }
 
-    public bool CanFarmAtCell(Vector3Int cellPosition, Image speechBubbleRenderer, TextMeshProUGUI speechBubbleText, TileBase hoeableTile)
+    public bool CanFarmAtCell(Vector3Int cellPosition, Image speechBubbleRenderer, TextMeshProUGUI speechBubbleText, TileBase[] hoeableTiles)
     {
         if (!interactableTilemap.HasTile(cellPosition))
             return false;
 
-        if (!CheckAreaTiles(cellPosition, hoeableTile, speechBubbleRenderer, speechBubbleText))
+        if (!CheckAreaTiles(cellPosition, hoeableTiles, speechBubbleRenderer, speechBubbleText))
             return false;
 
         if (!IsPlayerInRange(cellPosition))
@@ -124,7 +126,8 @@ public class Farming
 
     public void HandleFarming(Vector3Int cellPosition)
     {
-        ReplaceTiles(cellPosition);
+        ReplaceTiles(cellPosition, interactableTilemap);
+        ReplaceTiles(cellPosition, decorationTilemap);
     }
 }
 

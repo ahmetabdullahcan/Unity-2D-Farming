@@ -15,12 +15,13 @@ public class PlayerActions : MonoBehaviour
     [Header("Tilemaps")]
     [SerializeField] private Tilemap interactableTilemap;
     [SerializeField] private Tilemap highlightTilemap;
+    [SerializeField] private Tilemap decorationTilemap;
 
     [Header("Tiles")]
     [SerializeField] private TileBase[] farmTiles;
     [SerializeField] private TileBase[] wateredFarmTiles;
     [SerializeField] private TileBase highlightTile;
-    [SerializeField] private TileBase HoeableTile;
+    [SerializeField] private TileBase[] HoeableTiles;
 
 
     [Header("Experimental")]
@@ -42,14 +43,12 @@ public class PlayerActions : MonoBehaviour
 
     #region Action Handlers
     private Farming farming;
-
     private Watering watering;
-
     #endregion
 
     private void Start()
     {
-        farming = new Farming(farmTiles, interactableTilemap, playerAnimator);
+        farming = new Farming(farmTiles, interactableTilemap, playerAnimator, decorationTilemap);
         watering = new Watering(wateredFarmTiles, interactableTilemap, playerAnimator);
     }
 
@@ -212,7 +211,7 @@ public class PlayerActions : MonoBehaviour
         switch (GetSelectedHotbarSlot())
         {
             case 0:
-                if (farming.CanFarmAtCell(targetedCell, speechBubbleRenderer, speechBubbleText, HoeableTile))
+                if (farming.CanFarmAtCell(targetedCell, speechBubbleRenderer, speechBubbleText, HoeableTiles))
                 {
                     playerAnimator.SetBool("isHoeing", true);
                     await ProgressUpdate();

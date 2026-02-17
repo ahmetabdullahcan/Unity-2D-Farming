@@ -48,6 +48,12 @@ TagManager:
   - name: Farm
     uniqueID: 3941945939
     locked: 0
+  - name: Decoration
+    uniqueID: 231352039
+    locked: 0
+  - name: Tree
+    uniqueID: 675330723
+    locked: 0
   - name: Highlight
     uniqueID: 1531788111
     locked: 0
