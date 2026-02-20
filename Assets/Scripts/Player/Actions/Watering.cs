@@ -34,6 +34,7 @@ public class Watering
     }
     private bool CheckAreaTiles(Vector3Int cellPosition)
     {
+        Debug.Log(interactableTilemap.GetTile(cellPosition).name);
         if (interactableTilemap.GetTile(cellPosition).name != farmTileCenterName)
             return false;
         return true;

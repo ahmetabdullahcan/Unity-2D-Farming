@@ -41,6 +41,19 @@ public class Farming
         tilemap.SetTile(cellPosition + new Vector3Int(0, -1, 0), farmTiles[7]);
         tilemap.SetTile(cellPosition + new Vector3Int(1, -1, 0), farmTiles[8]);
     }
+
+    private void ClearDecorationTiles(Vector3Int cellPosition)
+    {
+        decorationTilemap.SetTile(cellPosition + new Vector3Int(-1, 1, 0), null);
+        decorationTilemap.SetTile(cellPosition + new Vector3Int(0, 1, 0), null);
+        decorationTilemap.SetTile(cellPosition + new Vector3Int(1, 1, 0), null);
+        decorationTilemap.SetTile(cellPosition + new Vector3Int(-1, 0, 0), null);
+        decorationTilemap.SetTile(cellPosition, null);
+        decorationTilemap.SetTile(cellPosition + new Vector3Int(1, 0, 0), null);
+        decorationTilemap.SetTile(cellPosition + new Vector3Int(-1, -1, 0), null);
+        decorationTilemap.SetTile(cellPosition + new Vector3Int(0, -1, 0), null);
+        decorationTilemap.SetTile(cellPosition + new Vector3Int(1, -1, 0), null);
+    }
     private bool CheckAreaTiles(Vector3Int cellPosition, TileBase[] hoeableTiles, Image speechBubbleRenderer, TextMeshProUGUI speechBubbleText)
     {
         for (int x = -1; x <= 1; x++)
@@ -126,8 +139,8 @@ public class Farming
 
     public void HandleFarming(Vector3Int cellPosition)
     {
+        ClearDecorationTiles(cellPosition);
         ReplaceTiles(cellPosition, interactableTilemap);
-        ReplaceTiles(cellPosition, decorationTilemap);
     }
 }
 
