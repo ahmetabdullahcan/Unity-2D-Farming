@@ -7,35 +7,28 @@ using UnityEngine.UI;
 
 public class Watering
 {
-    private readonly string farmTileCenterName = "FarmLand_Tile_4";
-    private readonly TileBase[] wateredFarmTiles;
+    private readonly TileBase wateredFarmTile;
     private readonly Tilemap interactableTilemap;
     private readonly Animator playerAnimator;
+    private readonly TileBase waterableTile;
 
 
-    public Watering(TileBase[] wateredFarmTiles, Tilemap interactableTilemap, Animator playerAnimator)
+    public Watering(TileBase wateredFarmTile, TileBase waterableTile, Tilemap interactableTilemap, Animator playerAnimator)
     {
-        this.wateredFarmTiles = wateredFarmTiles;
+        this.wateredFarmTile = wateredFarmTile;
         this.interactableTilemap = interactableTilemap;
         this.playerAnimator = playerAnimator;
+        this.waterableTile = waterableTile;
     }
 
     private void ReplaceTiles(Vector3Int cellPosition)
     {
-        interactableTilemap.SetTile(cellPosition + new Vector3Int(-1, 1, 0), wateredFarmTiles[0]);
-        interactableTilemap.SetTile(cellPosition + new Vector3Int(0, 1, 0), wateredFarmTiles[1]);
-        interactableTilemap.SetTile(cellPosition + new Vector3Int(1, 1, 0), wateredFarmTiles[2]);
-        interactableTilemap.SetTile(cellPosition + new Vector3Int(-1, 0, 0), wateredFarmTiles[3]);
-        interactableTilemap.SetTile(cellPosition, wateredFarmTiles[4]);
-        interactableTilemap.SetTile(cellPosition + new Vector3Int(1, 0, 0), wateredFarmTiles[5]);
-        interactableTilemap.SetTile(cellPosition + new Vector3Int(-1, -1, 0), wateredFarmTiles[6]);
-        interactableTilemap.SetTile(cellPosition + new Vector3Int(0, -1, 0), wateredFarmTiles[7]);
-        interactableTilemap.SetTile(cellPosition + new Vector3Int(1, -1, 0), wateredFarmTiles[8]);
+        interactableTilemap.SetTile(cellPosition, wateredFarmTile);
     }
     private bool CheckAreaTiles(Vector3Int cellPosition)
     {
         Debug.Log(interactableTilemap.GetTile(cellPosition).name);
-        if (interactableTilemap.GetTile(cellPosition).name != farmTileCenterName)
+        if (interactableTilemap.GetTile(cellPosition).name != waterableTile.name)
             return false;
         return true;
     }

@@ -18,8 +18,8 @@ public class PlayerActions : MonoBehaviour
     [SerializeField] private Tilemap decorationTilemap;
 
     [Header("Tiles")]
-    [SerializeField] private TileBase[] farmTiles;
-    [SerializeField] private TileBase[] wateredFarmTiles;
+    [SerializeField] private TileBase farmTile;
+    [SerializeField] private TileBase wateredFarmTile;
     [SerializeField] private TileBase highlightTile;
     [SerializeField] private TileBase[] HoeableTiles;
 
@@ -48,8 +48,8 @@ public class PlayerActions : MonoBehaviour
 
     private void Start()
     {
-        farming = new Farming(farmTiles, interactableTilemap, playerAnimator, decorationTilemap);
-        watering = new Watering(wateredFarmTiles, interactableTilemap, playerAnimator);
+        farming = new Farming(farmTile, interactableTilemap, playerAnimator, decorationTilemap);
+        watering = new Watering(wateredFarmTile,farmTile , interactableTilemap, playerAnimator);
     }
 
     

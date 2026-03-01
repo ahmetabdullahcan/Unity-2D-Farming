@@ -9,78 +9,69 @@ using UnityEngine.UI;
 
 public class Farming
 {
-    private readonly string[] farmTileNames;
-    private readonly TileBase[] farmTiles;
+    private readonly string farmTileName;
+    private readonly TileBase farmTile;
     private readonly Tilemap interactableTilemap;
     private readonly Animator playerAnimator;
     private readonly Tilemap decorationTilemap;
 
 
-    public Farming(TileBase[] farmTiles, Tilemap interactableTilemap, Animator playerAnimator, Tilemap decorationTilemap)
+    public Farming(TileBase farmTile, Tilemap interactableTilemap, Animator playerAnimator, Tilemap decorationTilemap)
     {
-        this.farmTiles = farmTiles;
+        this.farmTile = farmTile;
         this.decorationTilemap = decorationTilemap;
-        farmTileNames = new string[farmTiles.Length];
-        for (int i = 0; i < farmTiles.Length; i++)
-        {
-            farmTileNames[i] = farmTiles[i].name;
-        }
+        this.farmTileName = farmTile.name;
         this.interactableTilemap = interactableTilemap;
         this.playerAnimator = playerAnimator;
     }
 
     private void ReplaceTiles(Vector3Int cellPosition, Tilemap tilemap)
     {
-        tilemap.SetTile(cellPosition + new Vector3Int(-1, 1, 0), farmTiles[0]);
-        tilemap.SetTile(cellPosition + new Vector3Int(0, 1, 0), farmTiles[1]);
-        tilemap.SetTile(cellPosition + new Vector3Int(1, 1, 0), farmTiles[2]);
-        tilemap.SetTile(cellPosition + new Vector3Int(-1, 0, 0), farmTiles[3]);
-        tilemap.SetTile(cellPosition, farmTiles[4]);
-        tilemap.SetTile(cellPosition + new Vector3Int(1, 0, 0), farmTiles[5]);
-        tilemap.SetTile(cellPosition + new Vector3Int(-1, -1, 0), farmTiles[6]);
-        tilemap.SetTile(cellPosition + new Vector3Int(0, -1, 0), farmTiles[7]);
-        tilemap.SetTile(cellPosition + new Vector3Int(1, -1, 0), farmTiles[8]);
+
+        tilemap.SetTile(cellPosition, farmTile);
+
     }
 
     private void ClearDecorationTiles(Vector3Int cellPosition)
     {
-        decorationTilemap.SetTile(cellPosition + new Vector3Int(-1, 1, 0), null);
-        decorationTilemap.SetTile(cellPosition + new Vector3Int(0, 1, 0), null);
-        decorationTilemap.SetTile(cellPosition + new Vector3Int(1, 1, 0), null);
-        decorationTilemap.SetTile(cellPosition + new Vector3Int(-1, 0, 0), null);
+
         decorationTilemap.SetTile(cellPosition, null);
-        decorationTilemap.SetTile(cellPosition + new Vector3Int(1, 0, 0), null);
-        decorationTilemap.SetTile(cellPosition + new Vector3Int(-1, -1, 0), null);
-        decorationTilemap.SetTile(cellPosition + new Vector3Int(0, -1, 0), null);
-        decorationTilemap.SetTile(cellPosition + new Vector3Int(1, -1, 0), null);
     }
+    
     private bool CheckAreaTiles(Vector3Int cellPosition, TileBase[] hoeableTiles, Image speechBubbleRenderer, TextMeshProUGUI speechBubbleText)
     {
-        for (int x = -1; x <= 1; x++)
+        if (!interactableTilemap.HasTile(cellPosition))
         {
-            for (int y = -1; y <= 1; y++)
-            {
-                Vector3Int checkPos = cellPosition + new Vector3Int(x, y, 0);
-                if (!interactableTilemap.HasTile(checkPos) ||
-                farmTileNames.Contains(interactableTilemap.GetTile(checkPos).name))
-                {
-                    _ = ShowMessage(speechBubbleRenderer, speechBubbleText, 1000, "This area is already hoed!");
-                    return false;
-                }
-                if (interactableTilemap.GetTile(checkPos).name.StartsWith("Watered"))
-                {
-                    _ = ShowMessage(speechBubbleRenderer, speechBubbleText, 1000, "This area is already hoed and watered!");
-                    return false;
-                }
-                if (!hoeableTiles.Any(tile => tile.name == interactableTilemap.GetTile(checkPos).name))
-                {
-                    _ = ShowMessage(speechBubbleRenderer, speechBubbleText, 1000, "This area can't be hoed!");
-                    return false;
-                }
-            }
+            _ = ShowMessage(speechBubbleRenderer, speechBubbleText, 1000, "This area is already hoed!");
+            return false;
         }
 
-        
+        TileBase currentTile = interactableTilemap.GetTile(cellPosition);
+
+        if (currentTile == null)
+        {
+            _ = ShowMessage(speechBubbleRenderer, speechBubbleText, 1000, "This area can't be hoed!");
+            return false;
+        }
+
+        if (currentTile.name.Equals(farmTileName))
+        {
+            _ = ShowMessage(speechBubbleRenderer, speechBubbleText, 1000, "This area is already hoed!");
+            return false;
+        }
+
+        if (currentTile.name.StartsWith("Watered"))
+        {
+            _ = ShowMessage(speechBubbleRenderer, speechBubbleText, 1000, "This area is already hoed and watered!");
+            return false;
+        }
+
+        if (!hoeableTiles.Any(tile => tile.name == currentTile.name))
+        {
+            _ = ShowMessage(speechBubbleRenderer, speechBubbleText, 1000, "This area can't be hoed!");
+            return false;
+        }
+
         return true;
     }
 

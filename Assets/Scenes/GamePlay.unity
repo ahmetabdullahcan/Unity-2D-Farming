@@ -1034,26 +1034,8 @@ MonoBehaviour:
   interactableTilemap: {fileID: 959269028}
   highlightTilemap: {fileID: 2100115744}
   decorationTilemap: {fileID: 502766129}
-  farmTiles:
-  - {fileID: 11400000, guid: 2c07391dedafd036794e481dfa8ca29c, type: 2}
-  - {fileID: 11400000, guid: 86301e27a000a024eacecedcb2011a1a, type: 2}
-  - {fileID: 11400000, guid: faec32e9cc958850eb095ce41f846596, type: 2}
-  - {fileID: 11400000, guid: 1f4b0a47cef7f8cbb817183a676bb95f, type: 2}
-  - {fileID: 11400000, guid: 98d294f8b048a2d6e847361cd27d9b48, type: 2}
-  - {fileID: 11400000, guid: 093240d60626f47d3b75259a978deae4, type: 2}
-  - {fileID: 11400000, guid: 92f4b0effaa49086795742339c02c30f, type: 2}
-  - {fileID: 11400000, guid: 73b8e2a1c91d56cd0b2b8ae6acb33bf7, type: 2}
-  - {fileID: 11400000, guid: fef46c9d67d69a082888dcec81eef4f6, type: 2}
-  wateredFarmTiles:
-  - {fileID: 11400000, guid: c1b1e24ab4df3d4f6ab77f03600fd9ad, type: 2}
-  - {fileID: 11400000, guid: eaafe3492607f01a1a4236ba472adb13, type: 2}
-  - {fileID: 11400000, guid: 6bdbbc0df778ab90cbb22d1fd3cd8247, type: 2}
-  - {fileID: 11400000, guid: f0915913a0687796fba69944bb38cd72, type: 2}
-  - {fileID: 11400000, guid: 444885242a37f854094ffc167d15c628, type: 2}
-  - {fileID: 11400000, guid: 58997fb11dedfe73486ebf3f0bff9f55, type: 2}
-  - {fileID: 11400000, guid: 8d05d40055a729a3ca5dde08f8014932, type: 2}
-  - {fileID: 11400000, guid: f2575d9501891f6a4a9d13ef56f0b8a0, type: 2}
-  - {fileID: 11400000, guid: 4a6a29185d65b20d48320023364ae10d, type: 2}
+  farmTile: {fileID: 11400000, guid: 146a999c519541146b61e0d55774d77c, type: 2}
+  wateredFarmTile: {fileID: 11400000, guid: 803a8980d59fd77bc8a7a5cb7e0c5848, type: 2}
   highlightTile: {fileID: 11400000, guid: 3d9d1678e8ce9e0da9fcdecfed0636d7, type: 2}
   HoeableTiles:
   - {fileID: 11400000, guid: e45bdccad52388fdaad2e99371ac0907, type: 2}
